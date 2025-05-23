@@ -1,11 +1,35 @@
-canvas {
+/* canvas {
   border: 1px solid black;
   cursor: pointer;
   display: flex;
+} */
+
+body {
+  background: #626262;
 }
 
-.stepButton {
-  text-align: end;
+#stepControls {
+  margin-top: 10px;
+}
+
+canvas {
+  display: flex;
+  border-radius: 30px;
+  background: #e0e0e0;
+  margin: 20px 0;
+}
+
+button {
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 20px;
+  color: #fff;
+  padding: 1em 1.8em;
+  background: #4d4a77;
+  transition: 0.2s background;
+  align-items: center;
+  gap: 0.6em;
+  font-weight: bold;
 }
 
 body {
@@ -19,6 +43,8 @@ body {
 }
 
 textarea {
+  background: #e0e0e0;
   width: 100%;
   height: 100px;
+  margin-top: 50px;
 }

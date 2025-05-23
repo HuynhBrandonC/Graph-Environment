@@ -13,18 +13,24 @@
       acting as an id. You can drag the nodes around to rearrange them and add
       edges between two nodes. You can view the current graph as an adjaceny
       list or an adjaceny matrix. I have two algorithms of searching as of right
-      now. Depth first and Breadth first search.
+      now. Depth first and Breadth first search. You can step backwards and
+      forwards through these functions step by step to see how they work.
     </h3>
     <h3>
-      How depth first search works is given a starting node and a target node,
-      it goes down a connected edge. It keeps going down that connected edge
-      until it either reaches the target or it can no longer go down an edge. In
-      that case it backtracks nodes on the path it just went down until it
-      reaches a node that has an available edge to go down. And then it goes
-      through the same process until the target node is found, or no node is
-      found.
+      How depth first search works is given a starting node, it goes down the
+      path as far as it can, visiting each node on the way. If it reaches as
+      deep as it can, it backtracks to the previous node and checks if any of
+      its neighbors haven't been visited. And, it repeats the process until all
+      nodes are checked or the target node is found. If no target found is given
+      it will show the distance between the starting node and each node
     </h3>
-    <h3>How breadth first search works is</h3>
+    <h3>
+      How breadth first search works is given a starting node it will visit each
+      neighbor of that node before it advances in which it will then first visit
+      all neighbors of each of the nodes it visited, and on until it reaches the
+      target node or visits all nodes. This will also show the distance between
+      each node if no target node is given
+    </h3>
     <a href="main.html">Go to Graph Environment</a>
   </body>
 </html>

@@ -10,8 +10,8 @@
     <h2>Graph Environment</h2>
     <a href="index.html">Go back to homepage</a>
     <div id="stepControls">
-      <button class="stepButton" onclick="stepBackward()">Step Back</button>
-      <button class="stepButton" onclick="stepForward()">Step Forward</button>
+      <button onclick="stepBackward()">Step Back</button>
+      <button onclick="stepForward()">Step Forward</button>
     </div>
     <canvas id="graphDisplay" width="600px" height="400px"></canvas>
     <div id="controls">
@@ -19,8 +19,8 @@
       <button onclick="addEdge()">Add Edge</button>
       <button onclick="showAdjList()">Adjacency List</button>
       <button onclick="showAdjMatrix()">Adjacency Matrix</button>
-      <button onclick="runBFS()">Run BFS</button>
-      <button onclick="runDFS()">Run DFS</button>
+      <button onclick="BFS()">Run BFS</button>
+      <button onclick="DFS()">Run DFS</button>
       <button onclick="resizeCanvas()">Resize Canvas</button>
       <textarea id="output"></textarea>
     </div>

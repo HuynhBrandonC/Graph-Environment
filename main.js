@@ -3,16 +3,14 @@ const ctx = canvas.getContext("2d");
 
 let nodes = [],
   edges = [],
-  adj = {};
-
-let dragging = false;
-let heldNode = null;
-
-let steps = [];
-let step = -1;
+  adj = {},
+  dragging = false,
+  heldNode = null,
+  steps = [],
+  step = -1;
 
 function stepForward() {
-  if (step < steps.length - 1) step++;
+  if (step <= steps.length - 1) step++;
   updateStep();
 }
 
@@ -29,12 +27,8 @@ function updateStep() {
 }
 
 canvas.addEventListener("mousedown", (e) => {
-  let x = e.offsetX,
-    y = e.offsetY;
   for (let n of nodes) {
-    let dx = n.x - x,
-      dy = n.y - y;
-    if (Math.sqrt(dx * dx + dy * dy) < 25) {
+    if (Math.abs(n.x - e.offsetX) < 25 && Math.abs(n.y - e.offsetY) < 25) {
       dragging = true;
       heldNode = n;
       break;
@@ -54,6 +48,14 @@ canvas.addEventListener("mouseup", () => {
   dragging = false;
   heldNode = null;
 });
+
+function draggingJawn() {
+  for (let node of adj[heldNode.label]) {
+    if (node) {
+      return;
+    }
+  }
+}
 
 function redrawJawn() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,6 +81,16 @@ function redrawJawn() {
   }
 }
 
+function drawNode(node) {
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, 20, 0, 2 * Math.PI);
+  ctx.fillStyle = "#7fc9ff";
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "black";
+  ctx.fillText(node.label, node.x - 6, node.y + 5);
+}
+
 function resizeCanvas() {
   let newW = prompt("enter new width:");
   let newH = prompt("enter new height:");
@@ -93,8 +105,9 @@ function addNode() {
   let px = Math.random() * 550 + 25;
   let py = Math.random() * 350 + 25;
   nodes.push({ label, x: px, y: py });
+  console.log();
   adj[label] = [];
-  redrawJawn();
+  drawNode(nodes.find((n) => n.label == label));
 }
 
 function addEdge() {
@@ -109,35 +122,38 @@ function addEdge() {
 
 function showAdjList() {
   let result = "";
-  for (let n in adj) result += n + " => " + adj[n].join(" | ") + "\n";
+  for (let n in adj) result += n + " -> " + adj[n].join(", ") + "\n";
   document.getElementById("output").value = "Adjacency List:\n" + result;
 }
 
 function showAdjMatrix() {
-  let lbls = nodes.map((x) => x.label);
+  let labels = nodes.map((x) => x.label);
   let grid = [];
-  for (let i = 0; i < lbls.length; i++) {
+  for (let i = 0; i < labels.length; i++) {
     grid[i] = [];
-    for (let j = 0; j < lbls.length; j++) {
-      grid[i][j] = adj[lbls[i]].includes(lbls[j]) ? 1 : 0;
+    for (let j = 0; j < labels.length; j++) {
+      grid[i][j] = adj[labels[i]].includes(labels[j]) ? 1 : 0;
     }
   }
-  let txt = "Matrix:\n   " + lbls.join(" ") + "\n";
-  for (let i = 0; i < lbls.length; i++) {
-    txt += lbls[i] + " " + grid[i].join("  ") + "\n";
+  let txt = "Adjacency Matrix:\n   " + labels.join(" ") + "\n";
+  for (let i = 0; i < labels.length; i++) {
+    txt += labels[i] + " " + grid[i].join("  ") + "\n";
   }
   document.getElementById("output").value = txt;
 }
 
-function runBFS() {
+function BFS() {
   let start = prompt("start node:");
-  let goal = prompt("target node:");
+  let goal = prompt("target node (Leave blank for distance map):");
   if (!adj[start]) return;
 
-  let queue = [start];
-  let visited = [];
-  let cameFrom = {};
-  cameFrom[start] = null;
+  let queue = [start],
+    visited = [],
+    path = {},
+    distance = {};
+
+  path[start] = null;
+  distance[start] = 0;
 
   steps = [];
   step = -1;
@@ -151,39 +167,49 @@ function runBFS() {
     if (curr === goal) break;
     for (let i = 0; i < adj[curr].length; i++) {
       let n = adj[curr][i];
-      if (!(n in cameFrom)) {
-        cameFrom[n] = curr;
+      if (!(n in path)) {
+        path[n] = curr;
+        console.log(distance[curr]);
+        distance[n] = distance[curr] + 1;
         queue.push(n);
       }
     }
   }
 
   let out = "BFS:\n" + visited.join(" -> ");
-  if (goal && goal in cameFrom) {
+  if (goal && goal in path) {
     let path = [];
     let t = goal;
     while (t !== null) {
       path.unshift(t);
-      t = cameFrom[t];
+      t = path[t];
     }
     out += "\nPath: " + path.join(" -> ");
+  } else if (!goal) {
+    out += "\nSteps from " + start + ":\n";
+    for (let node in distance) {
+      out += node + " -> " + distance[node] + "\n";
+      console.log(distance);
+    }
   }
   document.getElementById("output").value = out;
 }
 
-function runDFS() {
+function DFS() {
   let start = prompt("start node:");
-  let goal = prompt("target node:");
+  let goal = prompt("target node (Leave blank for distance map):");
   if (!adj[start]) return;
 
   let visited = [],
-    path = {};
-  let done = false;
+    path = {},
+    distance = {},
+    done = false;
 
   steps = [];
   step = -1;
 
   path[start] = null;
+  distance[start] = 0;
 
   function recurse(n) {
     if (done) return;
@@ -197,6 +223,7 @@ function runDFS() {
       let next = adj[n][i];
       if (!visited.includes(next)) {
         path[next] = n;
+        distance[next] = distance[n] + 1;
         recurse(next);
       }
     }
@@ -213,6 +240,11 @@ function runDFS() {
       p = path[p];
     }
     str += "\nFound: " + trace.join(" -> ");
+  } else if (!goal) {
+    str += "\nSteps from " + start + ":\n";
+    for (let node in distance) {
+      str += node + " -> " + distance[node] + "\n";
+    }
   }
   document.getElementById("output").value = str;
 }
